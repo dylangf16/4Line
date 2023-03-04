@@ -1,0 +1,36 @@
+#lang scheme
+
+(define (buildList list0 m)
+  (cond ((equal? m 0)
+         list0)
+        (else
+         (buildList (append list0 '(0)) (- m 1))
+         )))
+
+(define (buildMatrix matrix n m)
+  (cond ((equal? n 0)
+         matrix)
+        (else
+         (buildMatrix (append matrix (list (buildList '() m))) (- n 1) m)
+         )))
+
+(define (replaceInList list0 pos value count)
+  (cond ((null? list0)
+         null)
+        ((equal? pos count)
+         (append (list value) (cdr list0)))
+        (else
+         (append (list (car list0)) (replaceInList (cdr list0) pos value (+ count 1)))
+         )))
+
+(define (replaceInMatrix matrix n m value count)
+  (cond ((null? matrix)
+         null)
+        ((equal? n count)
+         (append (list (replaceInList (car matrix) m value 0)) (cdr matrix)))
+        (else
+         (append (list (car matrix)) (replaceInMatrix (cdr matrix) n m value (+ count 1))))
+        ))
+
+
+
