@@ -4,12 +4,11 @@
                  (0 0 0 0 0 0 0 0)
                  (0 0 0 0 0 0 1 2)
                  (0 0 0 2 0 2 2 1)
-                 (1 2 1 2 1 2 1 2)
-                 (2 1 2 1 2 1 2 1)
+                 (1 0 1 2 1 2 1 2)
+                 (2 0 2 1 2 1 2 1)
                  (1 2 1 2 1 1 2 2)))
 
 ;;SIEMPRE (fila columna)
-;;Output teórico : ((5,1) (5,2) (5,3) (4,4) (5,5) (4,6) (3,7) (3,8))
 ;;Obtiene los posibles candidatos
 (define (conjuntoCandidatos matriz matrizRecorrida listaCandidatos fila)
   (cond
@@ -55,13 +54,6 @@
     ((> (car lista) 0) (verifNum (cdr lista)))
     (else #f)))
 
-;;Retorna TRUE si la fila tiene la palabra dada dentro de la lista
-(define (miembro palabra lista)
-  (cond
-    ((null? lista)#f)
-    ((equal? (car lista) palabra) #t)
-     (else (miembro palabra (cdr lista)))))
-
 ;;Retorna una lista con el primer valor encontrado cambiado por un cero
 (define (eliminaUnValor lista listaRespuesta)
   (cond
@@ -75,21 +67,47 @@
   ((null? lista) listaRespuesta)
   ((and (equal? columna contador) (equal? (car lista) 0)) (append listaRespuesta (list (list fila columna)) (cdr lista)))
   (else (cambiarValorEspecifico fila columna (cdr lista) (append listaRespuesta (list (car lista))) (+ contador 1)))))
-                             
-
-(quote "------------------------------------------------")
 
 (conjuntoCandidatos matriz matriz '(0 0 0 0 0 0 0 0) 1)
 
 
 ;;Posibles pesos:
-;;Pts al rededor de ia ( +1 )
-;;Pts al rededor de jugador ( +2 )
-;;Posicion // #eliminados +1
-;;(define (Funcion_Objetivo matriz matrizRecorrida contador listaPesos listaCandidatos)
-  ;;(cond
-    ;;)) ;;Asigna pesos a las posibles soluciones
+;;Ficha de ia ( +4 ) Ficha ia = 2
+;;Ficha de jugador ( +8 ) Ficha jugador = 1
 
+;;caar para fila
+;;cadar para columna
+;;Define los pesos de cada candidato
+(define (FuncionObjetivo listaCandidatos matriz listaPesos)
+  (cond
+    ((null? listaCandidatos) listaPesos)
+    ((and (equal? (caar listaCandidatos) 1) (equal? (cadar listaCandidatos) 1)) (quote "sis1")) ;;Esquina Superior izquierda
+    ((and (equal? (caar listaCandidatos) 1) (equal? (cadar listaCandidatos) 8)) (quote "sis2")) ;;Ezquina Superior derecha
+    ((and (equal? (caar listaCandidatos) 8) (equal? (cadar listaCandidatos) 1)) (quote "sis3")) ;;Ezquina Inferior izquierda
+    ((and (equal? (caar listaCandidatos) 8) (equal? (cadar listaCandidatos) 8)) (quote "sis4")) ;;Ezquina inferior Derecha
+    ((equal? (caar listaCandidatos) 1) (quote "sis5")) ;;Primera fila
+    ((equal? (caar listaCandidatos) 8) (quote "sis6")) ;;Ultima fila
+    ((equal? (cadar listaCandidatos) 1) (quote "sis7")) ;;Primera Columna
+    ((equal? (cadar listaCandidatos) 8) (quote "sis8")) ;;Ultima Columna 
+    
+    (else (quote "sis9")))) ;;Cualquier otro lado
+
+
+    
+(define (Peso columna matriz contFila contColumna)
+  (cond
+    ((equal? columna contColumna) (CalculoPeso 0 (car matriz)))
+    (else (Peso columna (cdr matriz) contFila (+ 1 contColumna)))))
+
+
+(define (CalculoPeso PesoTotal PesoDado)
+  (cond
+    ((equal? PesoDado 0) (+ PesoTotal 0))
+    ((equal? PesoDado 1) (+ PesoTotal 8))
+    ((equal? PesoDado 2) (+ PesoTotal 4))))
+
+
+(FuncionObjetivo '((5 1) (7 2) (5 3) (4 4) (5 5) (4 6) (3 7) (3 8)) matriz '())
 ;;(define (Funcion_Viabilidad)) ;;Analiza si el candidato seleccionado sirve para obtener una solución
 
 ;;(define (Funcion_Seleccion)) ;;Selecciona el mejor candidato
@@ -100,12 +118,3 @@
 
 ;;(define (Cuantos_Conectados))
 
-
-(define (traverse-matrix matrix)
-  (for-each (lambda (row)
-              (for-each (lambda (elem)
-                          (display elem)
-                          (display " "))
-                        row)
-              (newline))
-            matrix))
