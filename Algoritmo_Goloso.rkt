@@ -19,7 +19,7 @@
          (conjuntoCandidatos matriz (cdr matrizRecorrida) listaCandidatos (+ fila 1))) ;;verif si la fila está llena de 0
     
     ((equal? (verifNum (car matrizRecorrida)) #t)
-     listaCandidatos) ;;verif si la fila está llena de números
+     (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos) (+ fila 1))) ;;verif si la fila está llena de números
     
     (else (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos) (+ fila 1)))))
         
@@ -27,23 +27,14 @@
   (cond
     ((equal? (verifCeros filaPorAnalizar) #t) listaCandidatos)
     (else (conjuntoCandidatosAUX (eliminaUnValor filaPorAnalizar '()) fila (cambiarValorEspecifico (- fila 1) (encontrarColumna filaPorAnalizar 0) listaCandidatos '() 1)))))
-       
+
+;;Función que retorna la matriz con una candidad de filas exactas
 (define (moverMatriz matriz fila)
   (cond
     ((equal? fila 0) matriz)
     (else (moverMatriz (cdr matriz) (- fila 1)))))
 
-(define (cortar lista columna)
-  (cond
-    ((equal? columna 0) lista)
-    (else(cortar (cdr lista) (- columna 1)))))
-
-(define (verifSup lista columna)
-  (cond
-    ((null? lista) #f)
-    ((and(equal? columna 0) (equal? (car lista) 0)) #t)
-    (else (verifSup (cdr lista) (- columna 1)))))
-   
+;;Función que retorna la columna del primer valor que se encuentra
 (define (encontrarColumna lista columna)
   (cond
     ((null? lista) columna)
