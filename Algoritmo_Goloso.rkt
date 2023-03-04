@@ -9,51 +9,46 @@
                  (1 2 1 2 1 1 2 2)))
 
 ;;SIEMPRE (fila columna)
+;;Output teórico : ((5,1) (5,2) (5,3) (4,4) (5,5) (4,6) (3,7) (3,8))
 ;;Obtiene los posibles candidatos
 (define (conjuntoCandidatos matriz matrizRecorrida listaCandidatos fila)
   (cond
-    ((null? matrizRecorrida) listaCandidatos)
+    ((null? matrizRecorrida) listaCandidatos) ;;salida
     
     ((equal? (verifCeros (car matrizRecorrida)) #t)
-         (conjuntoCandidatos matriz (cdr matrizRecorrida) listaCandidatos (+ fila 1)))
+         (conjuntoCandidatos matriz (cdr matrizRecorrida) listaCandidatos (+ fila 1))) ;;verif si la fila está llena de 0
     
-    ((and(equal? (verifNum (car matrizRecorrida)) #t) (equal? (miembro 0 (car (moverMatriz(matriz (- fila 1))))) #f))
-     listaCandidatos)))
+    ((equal? (verifNum (car matrizRecorrida)) #t)
+     listaCandidatos) ;;verif si la fila está llena de números
+    
+    (else (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos) (+ fila 1)))))
         
 (define (conjuntoCandidatosAUX filaPorAnalizar fila listaCandidatos)
   (cond
     ((equal? (verifCeros filaPorAnalizar) #t) listaCandidatos)
-    (else (cambiarValorEspecifico (- fila 1) (encontrarColumna filaPorAnalizar 0) listaCandidatos '() 1))))
-
-
-          
+    (else (conjuntoCandidatosAUX (eliminaUnValor filaPorAnalizar '()) fila (cambiarValorEspecifico (- fila 1) (encontrarColumna filaPorAnalizar 0) listaCandidatos '() 1)))))
+       
 (define (moverMatriz matriz fila)
   (cond
     ((equal? fila 0) matriz)
-    (else (cdr matriz) (- fila 1))))
+    (else (moverMatriz (cdr matriz) (- fila 1)))))
 
 (define (cortar lista columna)
   (cond
     ((equal? columna 0) lista)
     (else(cortar (cdr lista) (- columna 1)))))
 
-(cortar '(0 0 0 0 0 0 1 2) 3)
-
 (define (verifSup lista columna)
   (cond
     ((null? lista) #f)
     ((and(equal? columna 0) (equal? (car lista) 0)) #t)
     (else (verifSup (cdr lista) (- columna 1)))))
-
-(verifSup '(0 0 0 2 0 2 2 1) 4)
    
 (define (encontrarColumna lista columna)
   (cond
     ((null? lista) columna)
     ((equal? (car lista) 0) (encontrarColumna (cdr lista) (+ columna 1)))
     (else (+ columna 1))))
-
-(encontrarColumna '(0 0 0 2 0 2 2 1) 0)
 
 ;;Retorna TRUE si la fila tiene solamente 0
 (define (verifCeros lista)
@@ -83,19 +78,17 @@
   ((equal? (car lista) 0) (eliminaUnValor (cdr lista) (append listaRespuesta (list (car lista)))))
   (else (append listaRespuesta (list 0) (cdr lista)))))
 
-(eliminaUnValor '(0 0 0 0 0 0 1 2) '())
-
 ;;Retorna la lista de candidatos renovada
 (define (cambiarValorEspecifico fila columna lista listaRespuesta contador)
   (cond
   ((null? lista) listaRespuesta)
-  ((equal? columna contador) (append listaRespuesta (list (list fila columna)) (cdr lista)))
+  ((and (equal? columna contador) (equal? (car lista) 0)) (append listaRespuesta (list (list fila columna)) (cdr lista)))
   (else (cambiarValorEspecifico fila columna (cdr lista) (append listaRespuesta (list (car lista))) (+ contador 1)))))
                              
 
 (quote "------------------------------------------------")
 
-(conjuntoCandidatos matriz matriz '() 1)
+(conjuntoCandidatos matriz matriz '(0 0 0 0 0 0 0 0) 1)
 
 
 ;;Posibles pesos:
