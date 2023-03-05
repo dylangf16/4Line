@@ -1,6 +1,6 @@
 #lang scheme
-(define matriz '((0 1 0 0 0 0 2 0)
-                 (1 0 0 0 0 0 1 0)
+(define matriz '((0 0 0 0 0 0 0 0)
+                 (0 0 0 0 0 0 0 0)
                  (0 0 0 0 0 0 0 0)
                  (0 0 0 0 0 0 1 2)
                  (0 0 0 2 0 2 2 1)
@@ -26,12 +26,6 @@
   (cond
     ((equal? (verifCeros filaPorAnalizar) #t) listaCandidatos)
     (else (conjuntoCandidatosAUX (eliminaUnValor filaPorAnalizar '()) fila (cambiarValorEspecifico (- fila 1) (encontrarColumna filaPorAnalizar 0) listaCandidatos '() 1)))))
-
-;;Función que retorna la matriz con una candidad de filas exactas
-(define (moverMatriz matriz fila)
-  (cond
-    ((equal? fila 1) matriz)
-    (else (moverMatriz (cdr matriz) (- fila 1)))))
 
 ;;Función que retorna la columna del primer valor que se encuentra
 (define (encontrarColumna lista columna)
@@ -86,31 +80,72 @@
                                                                                          (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos))) ;;Esquina Superior Izquierda
+    
     ((and (equal? (caar listaCandidatos) 1) (equal? (cadar listaCandidatos) 8)) (FuncionObjetivo (cdr listaCandidatos) matriz (append (list (+
                                                                                          (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos))) ;;Esquina Superior Derecha
+    
     ((and (equal? (caar listaCandidatos) 8) (equal? (cadar listaCandidatos) 1)) (FuncionObjetivo (cdr listaCandidatos) matriz (append (list (+
                                                                                          (Peso (cadar listaCandidatos) (car (moverMatriz matriz (- (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos))) ;;Ezquina Inferior izquierda
+    
     ((and (equal? (caar listaCandidatos) 8) (equal? (cadar listaCandidatos) 8)) (FuncionObjetivo (cdr listaCandidatos) matriz (append (list (+
                                                                                          (Peso (cadar listaCandidatos) (car (moverMatriz matriz (- (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos))) ;;Ezquina inferior Derecha
-    ((equal? (caar listaCandidatos) 1) (quote "sis5")) ;;Primera fila
-    ((equal? (caar listaCandidatos) 8) (quote "sis6")) ;;Ultima fila
-    ((equal? (cadar listaCandidatos) 1) (quote "sis7")) ;;Primera Columna
-    ((equal? (cadar listaCandidatos) 8) (quote "sis8")) ;;Ultima Columna 
-    
-    (else (quote "sis9")))) ;;Cualquier otro lado
+    ((equal? (caar listaCandidatos) 1) (FuncionObjetivo (cdr listaCandidatos) matriz (append (list (+
+                                                                                                    (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
+                                                                                                    (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
+                                                                                                    (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
+                                                                                                    (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
+                                                                                                    (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos))) ;;Primera Fila
+                                                                                                                                                                                                                                                                                   
+    ((equal? (caar listaCandidatos) 8) (FuncionObjetivo (cdr listaCandidatos) matriz (append (list (+
+                                                                                                    (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
+                                                                                                    (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
+                                                                                                    (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
+                                                                                                    (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1) )) listaPesos))) ;;Ultima Fila
+                                                                                                        
+    ((equal? (cadar listaCandidatos) 1) (FuncionObjetivo (cdr listaCandidatos) matriz (append (list (+
+                                                                                                     (Peso (cadar listaCandidatos) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
+                                                                                                     (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
+                                                                                                     (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
+                                                                                                     (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
+                                                                                                     (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1))) listaPesos))) ;;Primera columna
 
+                                                                                                    
+    ((equal? (cadar listaCandidatos) 8) (FuncionObjetivo (cdr listaCandidatos) matriz (append (list (+
+                                                                                                     (Peso (cadar listaCandidatos) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
+                                                                                                     (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
+                                                                                                     (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
+                                                                                                     (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
+                                                                                                     (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1))) listaPesos))) ;;Ultima columna
+
+    
+    (else (FuncionObjetivo (cdr listaCandidatos) matriz (append (list (+
+                                                                       (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
+                                                                       (Peso (cadar listaCandidatos) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
+                                                                       (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
+                                                                       (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
+                                                                       (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
+                                                                       (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
+                                                                       (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
+                                                                       (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1))) listaPesos)))))
+                                                                       
 
  
 (define (Peso columna lista contColumna)
   (cond
     ((equal? columna contColumna) (CalculoPeso 0 (car lista)))
     (else (Peso columna (cdr lista) (+ 1 contColumna)))))
+
+;;Función que retorna la matriz con una candidad de filas exactas
+(define (moverMatriz matriz fila)
+  (cond
+    ((equal? fila 1) matriz)
+    (else (moverMatriz (cdr matriz) (- fila 1)))))
 
 
 (define (CalculoPeso PesoTotal PesoDado)
@@ -119,9 +154,8 @@
     ((equal? PesoDado 1) (+ PesoTotal 1))
     ((equal? PesoDado 2) (+ PesoTotal 2))))
 
-(FuncionObjetivo '((1 1) (1 8) (8 1) (8 8)) matriz '())
+(FuncionObjetivo '((5 1) (7 2) (5 3) (4 4) (5 5) (4 6) (3 7) (3 8)) matriz '())
 
-;;(cdar matriz)
 ;;(define (Funcion_Viabilidad)) ;;Analiza si el candidato seleccionado sirve para obtener una solución
 
 ;;(define (Funcion_Seleccion)) ;;Selecciona el mejor candidato
@@ -129,6 +163,4 @@
 
 
 ;;(define (Funcion_Solucion)) ;;ANALIZA cuando cualquiera de los dos gana
-
-;;(define (Cuantos_Conectados))
 
