@@ -1,5 +1,7 @@
 #lang scheme
 
+(provide 4inLine)
+
 ;funcion que construye una lista de 0s del tamano dado
 (define (buildList list0 m)
   (cond ((equal? m 0)
