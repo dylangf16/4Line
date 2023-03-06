@@ -13,7 +13,12 @@
 
 
 ;;SIEMPRE (fila columna)
-;;Obtiene los posibles candidatos
+
+
+;;Input: matriz, matriz (esta va a ser la que se va a manipular), '(), 1
+;;La función lo que hace es ir línea por línea hasta chocar con números y ceros, si encuentra una fila con ambas condiciones y si encima no tiene un número
+;;Agrega la posición de encima del número topado como posible candidato
+;;Output: lista de candidatos, la posición de estos corresponde a la columna en la que están (es necesario hacer función que si la fila es 0, que agrege (0,0) a la lista)
 (define (conjuntoCandidatos matriz matrizRecorrida listaCandidatos fila)
   (cond
     ((null? matrizRecorrida) listaCandidatos) ;;salida
@@ -25,7 +30,7 @@
      (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos) (+ fila 1))) ;;verif si la fila está llena de números
     
     (else (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos) (+ fila 1)))))
-        
+
 (define (conjuntoCandidatosAUX filaPorAnalizar fila listaCandidatos)
   (cond
     ((equal? (verifCeros filaPorAnalizar) #t) listaCandidatos)
@@ -68,18 +73,19 @@
 
 (conjuntoCandidatos matriz matriz '(0 0 0 0 0 0 0 0) 1)
 
-
-;;Posibles pesos:
-;;Ficha de ia ( +4 ) Ficha ia = 2
-;;Ficha de jugador ( +8 ) Ficha jugador = 1
-
+;;Notas para mover en lista:
 ;;caar para fila
 ;;cadar para columna
 ;;Define los pesos de cada candidato
+
+;;Input: la lista de candidatos obtenida anteriormente, la matriz completa, '() y el número de columnas
+;;La función lo que hace es verificar los posibles campos al rededor de la posición dada por listaCandidatos
+;;Y dependiendo de las fichas que haya, da un peso, si la ficha alrededor es de jugador -> +8 // si  si la ficha alrededor es de ia -> +4
+;;Output: lista con los pesos (al igual que listaCandidatos, su posición corresponde a la columna donde está el candidato)
+;;Hay que agregar si la posición es (0,0), que de un peso de 0
 (define (FuncionObjetivo listaCandidatos matriz listaPesos max)
   (cond
     ((null? listaCandidatos) (reverse listaPesos))
-    ;;Esquina Superior izquierda
     ((and (equal? (caar listaCandidatos) 1) (equal? (cadar listaCandidatos) 1)) (FuncionObjetivo (cdr listaCandidatos) matriz (append (list (+
                                                                                          (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1) )) 1)
@@ -129,7 +135,7 @@
 
     
     (else (FuncionObjetivo (cdr listaCandidatos) matriz (append (list (+
-                                                                       (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
+                                                                       (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1) ;;El resto de posibles posiciones
                                                                        (Peso (cadar listaCandidatos) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
                                                                        (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
                                                                        (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
@@ -137,32 +143,36 @@
                                                                        (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
                                                                        (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
                                                                        (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1))) listaPesos) max))))
-                                                                       
+;;Funcion que retorna el valor de la posicion dada                                                                       
 (define (Peso columna lista contColumna)
   (cond
     ((equal? columna contColumna) (CalculoPeso 0 (car lista)))
     (else (Peso columna (cdr lista) (+ 1 contColumna)))))
 
-;;Función que retorna la matriz con una candidad de filas exactas
+;;Función que retorna la matriz con una candidad de filas exactas inferiores
 (define (moverMatriz matriz fila)
   (cond
     ((equal? fila 1) matriz)
     (else (moverMatriz (cdr matriz) (- fila 1)))))
 
+;;Función que retorna la matriz con una candidad de filas exactas superiores
 (define (moverMatrizSuperior matriz fila matrizNueva)
   (cond
     ((equal? fila 0) matrizNueva)
     (else (moverMatrizSuperior (cdr matriz) (- fila 1) (append matrizNueva (list (car matriz)))))))
 
+;;Da un valor con respecto al valor dado en la funcion Peso
 (define (CalculoPeso PesoTotal PesoDado)
   (cond
     ((equal? PesoDado 0) (+ PesoTotal 0))
-    ((equal? PesoDado 1) (+ PesoTotal 1))
-    ((equal? PesoDado 2) (+ PesoTotal 2))))
+    ((equal? PesoDado 1) (+ PesoTotal 8))
+    ((equal? PesoDado 2) (+ PesoTotal 4))))
 
 (FuncionObjetivo '((5 1) (7 2) (5 3) (4 4) (5 5) (4 6) (3 7) (3 8)) matriz '() 8)
 
+;;Input: lista de pesos obtenida anteriormente, lista de candidatos obtenida anterioremente, matriz total, '()
 ;;Analiza si el candidato seleccionado sirve para obtener una solución
+;;Output: lista actualizada de los pesos
 (define (Funcion_Viabilidad listaPesos listaCandidatos matriz nuevaListaPesos)
   (cond
     ((null? listaCandidatos) nuevaListaPesos)
@@ -172,7 +182,7 @@
     (else
      (Funcion_Viabilidad (cdr listaPesos) (cdr listaCandidatos) matriz (append nuevaListaPesos (list (car listaPesos)))))))
 
-
+;;Funcion que construye una nueva Matriz temporal, para analizar si la ficha hace un 4 en linea
 (define (construirNuevaMatrizTemp fila columna nuevaFila matrizSup matrizInf matrizNueva contador)
   (cond
     ((equal? columna contador) (append matrizNueva matrizSup (list  (append nuevaFila (list 2) (cdr fila))) matrizInf))
@@ -180,6 +190,9 @@
 
 (construirNuevaMatrizTemp '(0 0 0 2 0 2 2 1) 1 '() (moverMatrizSuperior matriz 4 '()) (moverMatriz matriz 6) '() 1)
 (Funcion_Viabilidad '(1 10 4 1 8 5 3 3) '((5 1) (7 2) (5 3) (4 4) (5 5) (4 6) (3 7) (3 8)) matriz '())
+;;Input:
+;;La funcion lo que hace es retornar la posición del candidato con mayor peso
+;;Output: posición donde va a caer la ficha
 ;;(define (Funcion_Seleccion)) ;;Selecciona el mejor candidato
 
 
