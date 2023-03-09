@@ -18,7 +18,7 @@
                  (2 0 2 2 1 1 2 1)
                  (1 2 1 2 1 1 2 2)))
 
-(define max 8)
+;;(define max 8)
 
 ;;Input: lista de pesos obtenida anteriormente, lista de candidatos obtenida anterioremente, matriz total, '()
 ;;Analiza si el candidato seleccionado sirve para obtener una solución
@@ -122,17 +122,17 @@
 ;;La función lo que hace es ir línea por línea hasta chocar con números y ceros, si encuentra una fila con ambas condiciones y si encima no tiene un número
 ;;Agrega la posición de encima del número topado como posible candidato
 ;;Output: lista de candidatos, la posición de estos corresponde a la columna en la que están
-(define (conjuntoCandidatos matriz matrizRecorrida listaCandidatos fila)
+(define (conjuntoCandidatos matriz matrizRecorrida listaCandidatos fila max)
   (cond
     ((null? matrizRecorrida) (FuncionSeleccion listaCandidatos (FuncionObjetivo listaCandidatos listaCandidatos matriz '() max) 1 0 0)) ;;salida
     
     ((equal? (verifCeros (car matrizRecorrida)) #t)
-         (conjuntoCandidatos matriz (cdr matrizRecorrida) listaCandidatos (+ fila 1))) ;;verif si la fila está llena de 0
+         (conjuntoCandidatos matriz (cdr matrizRecorrida) listaCandidatos (+ fila 1) max)) ;;verif si la fila está llena de 0
     
     ((equal? (verifNum (car matrizRecorrida)) #t)
-     (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos) (+ fila 1))) ;;verif si la fila está llena de números
+     (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos) (+ fila 1) max)) ;;verif si la fila está llena de números
     
-    (else (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos) (+ fila 1)))))
+    (else (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos) (+ fila 1) max))))
 
 (define (conjuntoCandidatosAUX filaPorAnalizar fila listaCandidatos)
   (cond
@@ -140,6 +140,6 @@
     ((equal? (- fila 1) 0) (conjuntoCandidatosAUX (eliminaUnValor filaPorAnalizar '()) fila (cambiarValorEspecifico 0 0 listaCandidatos '() 1)))
     (else (conjuntoCandidatosAUX (eliminaUnValor filaPorAnalizar '()) fila (cambiarValorEspecifico (- fila 1) (encontrarColumna filaPorAnalizar 0) listaCandidatos '() 1)))))
 
-(conjuntoCandidatos matriz matriz '(0 0 0 0 0 0 0 0) 1)
+(conjuntoCandidatos matriz matriz '(0 0 0 0 0 0 0 0) 1 8)
 
 
