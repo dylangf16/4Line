@@ -1,8 +1,5 @@
 #lang scheme
 
-<<<<<<< Updated upstream
-;funcion que construye una lista de 0s del tamano dado
-=======
 (provide 4inLine)
 
 ;----------------------------------------------------------
@@ -10,7 +7,6 @@
 ;;Input: lista vacia donde se va a ir construyendo recursivamente la lista de 0s, tamano de la lista
 ;;funcion auxiliar para construir la matriz de 0s, construye una lista de 0s del tamano dado
 ;;Output: lista del tamano dado de 0s
->>>>>>> Stashed changes
 (define (buildList list0 m)
   (cond ((equal? m 0)
          list0)
@@ -218,4 +214,26 @@
          #t)
         (else
          #f)))
+
+;--------------------------------------------
+
+
+;;Input: columna de la matriz de juego donde se desea insertar la ficha, 0
+;;funcion auxiliar de insertar Token, busca en que espacio de la columna puede caer la nueva ficha
+;;retorna el valor n (fila de la matriz) donde puede ir la nueva ficha
+(define (insertTokenAux column count)
+  (cond ((not (equal? (car column) 0))
+         (- count 1))
+        (else
+         (insertTokenAux (cdr column) (+ count 1)))))
+         
+;;Input: matriz de juego, columna donde se desea insertar la ficha
+;;Cambia el primer valor vacio (0), de la columna dada de la matriz de juego, por el valor del jugador (1)
+;;Output: matriz de juego con el la nueva ficha insertada.
+(define (insertToken matrix column)
+  (cond ((null? matrix)
+         null)
+        (else
+         (replaceInMatrix matrix (insertTokenAux (getColumn matrix column) 0) column 1 0))))
+
 
