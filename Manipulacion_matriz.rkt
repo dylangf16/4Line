@@ -107,7 +107,7 @@
          (getFromList (car matrix) m 0))
         (else
          (getFromMatrix (cdr matrix) n m (+ count 1))
-        )))
+         )))
 
 ;;Input: matriz de donde se desea obtener una columna, numero de columna que se desea obtener
 ;;Funcion auxiliar para encontrar 4 en linea vertical, convierte una columna de una matriz en una lista
@@ -143,7 +143,7 @@
 ;;Output: diagonal de una matriz en forma de lista
 (define (getDiagonal matrix startN startM)
   (cond ((null? (getFromMatrix matrix startN startM 0))
-        null)
+         null)
         (else
          (append (list (getFromMatrix matrix startN startM 0)) (getDiagonal matrix (+ startN 1) (+ startM 1))))))
 
@@ -235,9 +235,9 @@
   (cond
     ((null? column) 0)
     ((not (equal? (car column) 0))
-         (- count 1))
-        (else
-         (insertTokenAux (cdr column) (+ count 1)))))
+     (- count 1))
+    (else
+     (insertTokenAux (cdr column) (+ count 1)))))
          
 ;;Input: matriz de juego, columna donde se desea insertar la ficha
 ;;Cambia el primer valor vacio (0), de la columna dada de la matriz de juego, por el valor del jugador (1)
@@ -247,6 +247,3 @@
          null)
         (else
          (replaceInMatrix matrix (insertTokenAux (getColumn matrix column) 0) column 1 0))))
-
-
-(insertToken matrix2 0)
