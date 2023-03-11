@@ -218,14 +218,16 @@
 ;--------------------------------------------
 
 
-;;Input: columna de la matriz de juego donde se desea insertar la ficha, 0
+;;Input: columna de la matriz de juego original (donde se desea insertar la ficha), columna que se va a ir recorriendo, 0
 ;;funcion auxiliar de insertar Token, busca en que espacio de la columna puede caer la nueva ficha
 ;;retorna el valor n (fila de la matriz) donde puede ir la nueva ficha
-(define (insertTokenAux column count)
-  (cond ((not (equal? (car column) 0))
+(define (insertTokenAux columnOG column count)
+  (cond ((null? column)
+         (- (matrixLenght columnOG 0) 1))
+        ((not (equal? (car column) 0))
          (- count 1))
         (else
-         (insertTokenAux (cdr column) (+ count 1)))))
+         (insertTokenAux columnOG (cdr column) (+ count 1)))))
          
 ;;Input: matriz de juego, columna donde se desea insertar la ficha
 ;;Cambia el primer valor vacio (0), de la columna dada de la matriz de juego, por el valor del jugador (1)
@@ -234,6 +236,17 @@
   (cond ((null? matrix)
          null)
         (else
-         (replaceInMatrix matrix (insertTokenAux (getColumn matrix column) 0) column 1 0))))
+         (replaceInMatrix matrix (insertTokenAux (getColumn matrix column) (getColumn matrix column) 0) column 1 0))))
+
+
+(define matriz '((0 0 0 0 0 0 0 0)
+                 (0 0 0 0 0 0 0 0)
+                 (0 0 0 0 0 0 0 0)
+                 (0 1 1 2 2 1 2 1)
+                 (0 2 1 1 1 2 2 2)
+                 (2 2 2 1 1 1 1 1)))
+
+
+
 
 
