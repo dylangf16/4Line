@@ -111,10 +111,13 @@
   (define (insertarFichaIA)
     (define fila (car (conjuntoCandidatos matriz matriz (buildList '() (+ 8 (send choiceY get-selection))) 1 (+ 8 (send choiceX get-selection)) (+ 8 (send choiceY get-selection)))))
     (define columna (cadr (conjuntoCandidatos matriz matriz (buildList '() (+ 8 (send choiceY get-selection))) 1 (+ 8 (send choiceX get-selection)) (+ 8 (send choiceY get-selection)))))
-    (display fila)
-    (display columna)
-    (display matriz)
-    (set! matriz (replaceInMatrix matriz (- (encontrarFila matriz columna 1) 5) (- columna 1) 12545 0))
+    (println  "fila: ")
+    (displayln fila)
+    (println "columna: ")
+    (displayln columna)
+    (set! matriz (replaceInMatrix matriz (- (encontrarFila matriz columna 1) 1) (- columna 1) 2 0))
+    (println "matriz: ")
+    (displayln matriz)
     (recorridoInterfaz2 fila columna 30 30 1 1))   
     
       (new button% [parent ventana2]
