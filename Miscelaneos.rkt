@@ -71,17 +71,20 @@
         (else (cons (car lst) (replace-value (cdr lst) val (+ cont 1) maxFila)))))
 
 ;;Reemplaza todos los 0 con (0 0)
-(define (replace-all lst cont maxFila)
-  (cond ((null? lst) '())
-        ((list? (car lst)) (cons (replace-all (car lst) cont maxFila) (replace-all (cdr lst) cont maxFila)))
-        (else (replace-value lst (car lst) cont maxFila))))
-
-(replace-all '(0 0 0 0 (7 4) 0 0 0) 1 8)
+(define (replace-all lst maxFila cont listaReturn)
+  (cond
+    ((null? lst) listaReturn)
+    ((equal? (car lst) 0) (replace-all (cdr lst) maxFila (+ cont 1)(append listaReturn (list (list maxFila cont)))))
+    (else (replace-all (cdr lst) maxFila (+ cont 1) (append listaReturn (list (car lst)))))))
+    
+(quote "sis")
+(replace-all '(0 0 0 0 (7 4) 0 0 0) 8 1 '())
 ;;---------------------
 
 ;;Funcion que retorna el valor de la posicion dada                                                                       
 (define (Peso columna lista contColumna)
   (cond
+    ((null? lista) 0)
     ((equal? columna contColumna) (CalculoPeso 0 (car lista)))
     (else (Peso columna (cdr lista) (+ 1 contColumna)))))
 
@@ -109,6 +112,7 @@
 ;;Funcion que construye una nueva Matriz temporal, para analizar si la ficha hace un 4 en linea
 (define (construirNuevaMatrizTemp fila columna nuevaFila matrizSup matrizInf matrizNueva contador)
   (cond
+    ((null? fila) (append matrizNueva matrizSup (list  (append nuevaFila (list 2) fila)) matrizInf))
     ((equal? columna contador) (append matrizNueva matrizSup (list  (append nuevaFila (list 2) (cdr fila))) matrizInf))
     (else (construirNuevaMatrizTemp (cdr fila) columna (append nuevaFila (list (car fila)) ) matrizSup matrizInf matrizNueva (+ contador 1)))))
 

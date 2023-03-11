@@ -22,11 +22,11 @@
                 (send dc draw-text "4Line" 20 4))]))
 
 (define choiceX (new choice% [parent ventana]
-                         [label "Valor x"]
+                         [label "Filas"]
                          [choices (list "8" "9" "10" "11" "12" "13" "14" "15" "16")]
                          ))
 (define choiceY (new choice% [parent ventana]
-                         [label "Valor y"]
+                         [label "Columnas"]
                          [choices (list "8" "9" "10" "11" "12" "13" "14" "15" "16")]
                          ))
 
@@ -105,7 +105,7 @@
       ((<= (string->number (send choice get-string-selection)) (+ 8 (send choiceX get-selection)))
        (recorridoInterfaz (+(encontrarFila matriz columna 1) 1) columna 30 30 1 1))   
       (else 0))
-    
+    (verificacion)
     (insertarFichaIA))
 
   (define (insertarFichaIA)
@@ -118,11 +118,67 @@
     (set! matriz (replaceInMatrix matriz (- (encontrarFila matriz columna 1) 1) (- columna 1) 2 0))
     (println "matriz: ")
     (displayln matriz)
-    (recorridoInterfaz2 fila columna 30 30 1 1))   
+    (recorridoInterfaz2 fila columna 30 30 1 1)
+    (verificacion))
     
       (new button% [parent ventana2]
-       [label "yey"]
+       [label "Seleccionar columna"]
        [callback (lambda (button event) (insertarFicha1 (encontrarFila matriz (- (string->number (send choice get-string-selection)) 1) 1) (string->number (send choice get-string-selection))))])
+
+  (define (verificacion)
+    (cond
+      ((equal? (4inLine matriz 1) #t) (send ventana3 show #t))
+      ((equal? (4inLine matriz 2) #t) (send ventana4 show #t))
+      (else 0)))
+
+  (define ventana3 (new frame%
+                        [label "4Line"]
+                        [width 1000]
+                        [height 200]))
+
+  (define canva3 (new canvas% [parent ventana3]
+             [paint-callback
+              (lambda (canvas dc)
+                (send dc set-scale 1 1)
+                (send dc set-text-foreground "black")
+                (send dc set-scale 5 5)
+                (send dc set-text-foreground "red")
+                (send dc draw-text "GANADOR JUGADOR!!!!" 20 4))]))
+
+  (new button% [parent ventana3]
+             [label "Cerrar el juego"]
+             [callback (lambda (button event)
+                         (send msg set-label "Presiona para cerrar el juego!")
+                         (send ventana show #f)
+                         (send ventana2 show #f)
+                         (send ventana3 show #f)
+                         (send ventana4 show #f)
+                         )])
+  
+(define ventana4 (new frame%
+                        [label "4Line"]
+                        [width 100]
+                        [height 200]))
+  
+  (define canva4 (new canvas% [parent ventana4]
+             [paint-callback
+              (lambda (canvas dc)
+                (send dc set-scale 1 1)
+                (send dc set-text-foreground "black")
+                (send dc set-scale 5 5)
+                (send dc set-text-foreground "red")
+                (send dc draw-text "GANADOR ALGORITMO / MAQUINA!!!!!" 20 4))]))
+  
+   (new button% [parent ventana4]
+             [label "Cerrar el juego"]
+             [callback (lambda (button event)
+                         (send msg set-label "Presiona para cerrar el juego!")
+                         (send ventana show #f)
+                         (send ventana2 show #f)
+                         (send ventana3 show #f)
+                         (send ventana4 show #f)
+                         )])
+
 
   (send ventana2 show #t)
 

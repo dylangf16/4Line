@@ -26,19 +26,29 @@
                   (0 0 0 0 0 0 0 0)
                   (0 0 0 0 0 0 0 0)
                   (0 0 0 0 0 0 0 0)
-                  (0 0 0 0 1 0 0 0)))
+                  (1 0 0 0 0 0 0 0)))
 
 ;;Input: lista de pesos obtenida anteriormente, lista de candidatos obtenida anterioremente, matriz total, '()
 ;;Analiza si el candidato seleccionado sirve para obtener una solución
 ;;Output: lista actualizada de los pesos
 (define (Funcion_Viabilidad listaPesos listaCandidatos matriz nuevaListaPesos)
   (cond
-    ((null? listaCandidatos) nuevaListaPesos)
+    ((null? listaCandidatos) (funcion_viabilidadAUX listaPesos listaCandidatos matriz nuevaListaPesos))
     ((equal? (4inLine
        (construirNuevaMatrizTemp (car (moverMatriz matriz (caar listaCandidatos))) (cadar listaCandidatos) '() (moverMatrizSuperior matriz (- (caar listaCandidatos) 1) '()) (moverMatriz matriz  (+ (caar listaCandidatos) 1)) '() 1) 2) #t)
      (Funcion_Viabilidad (cdr listaPesos) (cdr listaCandidatos) matriz (append nuevaListaPesos (list (+ (car listaPesos) 100)))))
     (else
      (Funcion_Viabilidad (cdr listaPesos) (cdr listaCandidatos) matriz (append nuevaListaPesos (list (car listaPesos)))))))
+
+
+(define (funcion_viabilidadAUX listaPesos listaCandidatos matriz nuevaListaPesos)
+  (cond
+    ((null? listaCandidatos) (display nuevaListaPesos) nuevaListaPesos)
+    ((equal? (4inLine
+       (construirNuevaMatrizTemp (car (moverMatriz matriz (caar listaCandidatos))) (cadar listaCandidatos) '() (moverMatrizSuperior matriz (- (caar listaCandidatos) 1) '()) (moverMatriz matriz  (+ (caar listaCandidatos) 1)) '() 1) 1) #t)
+     (funcion_viabilidadAUX (cdr listaPesos) (cdr listaCandidatos) matriz (append nuevaListaPesos (list (+ (car listaPesos) 50)))))
+    (else
+     (funcion_viabilidadAUX (cdr listaPesos) (cdr listaCandidatos) matriz (append nuevaListaPesos (list (car listaPesos)))))))
 
 ;;Notas para mover en lista:
 ;;caar para fila
@@ -122,8 +132,6 @@
     ((> (car listaPesosFinales) pesoMayor) (FuncionSeleccion listaCandidatos (cdr listaPesosFinales) 1 (+ posMayor contador) (car listaPesosFinales)))
     (else (FuncionSeleccion listaCandidatos (cdr listaPesosFinales) (+ contador 1) posMayor pesoMayor))))
 
-
-
 ;;SIEMPRE (fila columna)
 
 ;;Input: matriz, matriz (esta va a ser la que se va a manipular), '(), 1 maxFilas maxColumnas
@@ -132,7 +140,7 @@
 ;;Output: lista de candidatos, la posición de estos corresponde a la columna en la que están
 (define (conjuntoCandidatos matriz matrizRecorrida listaCandidatos fila maxFilas maxColumnas)
   (cond
-    ((null? matrizRecorrida) (FuncionSeleccion (replace-all listaCandidatos 1 maxFilas) (FuncionObjetivo (replace-all listaCandidatos 1 maxFilas) (replace-all listaCandidatos 1 maxFilas) matriz '() maxFilas maxColumnas) 1 0 0)) ;;salida
+    ((null? matrizRecorrida) (FuncionSeleccion (replace-all listaCandidatos 1 maxFilas'()) (FuncionObjetivo (replace-all listaCandidatos 1 maxFilas'()) (replace-all listaCandidatos 1 maxFilas'()) matriz '() maxFilas maxColumnas) 1 0 0)) ;;salida
     
     ((equal? (verifCeros (car matrizRecorrida)) #t)
          (conjuntoCandidatos matriz (cdr matrizRecorrida) listaCandidatos (+ fila 1) maxFilas maxColumnas)) ;;verif si la fila está llena de 0
@@ -149,4 +157,6 @@
     (else (conjuntoCandidatosAUX (eliminaUnValor filaPorAnalizar '()) fila (cambiarValorEspecifico (- fila 1) (encontrarColumna filaPorAnalizar 0) listaCandidatos '() 1 maxFilas) maxFilas))))
 
 (conjuntoCandidatos matrix2 matrix2 '(0 0 0 0 0 0 0 0) 1 8 8)
+
+
 
