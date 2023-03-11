@@ -1,6 +1,16 @@
 #lang scheme
 
-(provide 4inLine buildMatrix replaceInMatrix insertToken)
+(provide 4inLine buildMatrix replaceInMatrix insertToken buildList)
+
+
+(define matrix2 '((0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (1 0 0 0 1 0 0 0)))
 
 ;----------------------------------------------------------
 
@@ -222,7 +232,9 @@
 ;;funcion auxiliar de insertar Token, busca en que espacio de la columna puede caer la nueva ficha
 ;;retorna el valor n (fila de la matriz) donde puede ir la nueva ficha
 (define (insertTokenAux column count)
-  (cond ((not (equal? (car column) 0))
+  (cond
+    ((null? column) 0)
+    ((not (equal? (car column) 0))
          (- count 1))
         (else
          (insertTokenAux (cdr column) (+ count 1)))))
@@ -236,3 +248,5 @@
         (else
          (replaceInMatrix matrix (insertTokenAux (getColumn matrix column) 0) column 1 0))))
 
+
+(insertToken matrix2 0)

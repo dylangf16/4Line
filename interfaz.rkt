@@ -3,7 +3,7 @@
 (require racket/math)
 (require "Manipulacion_matriz.rkt")
 (require "Miscelaneos.rkt")
-;;(require "Greedy_algorithm.rkt")
+(require "Greedy_algorithm.rkt")
 
 (define ventana (new frame%
                    [label "4Line"]
@@ -100,16 +100,24 @@
   ;; 30 / 30 es el (1,1)
   ;; +60 para moverse entre casillas
   (define (insertarFicha1 fila columna)
-    (display matriz)
-    (quote "sis")
-    (set! matriz (replaceInMatrix matriz (- fila 1) (- columna 1) 4512 0))
-    (display matriz)
+    (set! matriz (replaceInMatrix matriz (- (encontrarFila matriz columna 1) 1) (- columna 1) 1 0))
     (cond
       ((<= (string->number (send choice get-string-selection)) (+ 8 (send choiceX get-selection)))
-       (recorridoInterfaz fila columna 30 30 1 1))   
-      (else 0)))
-  
-  (new button% [parent ventana2]
+       (recorridoInterfaz (+(encontrarFila matriz columna 1) 1) columna 30 30 1 1))   
+      (else 0))
+    
+    (insertarFichaIA))
+
+  (define (insertarFichaIA)
+    (define fila (car (conjuntoCandidatos matriz matriz (buildList '() (+ 8 (send choiceY get-selection))) 1 (+ 8 (send choiceX get-selection)) (+ 8 (send choiceY get-selection)))))
+    (define columna (cadr (conjuntoCandidatos matriz matriz (buildList '() (+ 8 (send choiceY get-selection))) 1 (+ 8 (send choiceX get-selection)) (+ 8 (send choiceY get-selection)))))
+    (display fila)
+    (display columna)
+    (display matriz)
+    (set! matriz (replaceInMatrix matriz (- (encontrarFila matriz columna 1) 5) (- columna 1) 12545 0))
+    (recorridoInterfaz2 fila columna 30 30 1 1))   
+    
+      (new button% [parent ventana2]
        [label "yey"]
        [callback (lambda (button event) (insertarFicha1 (encontrarFila matriz (- (string->number (send choice get-string-selection)) 1) 1) (string->number (send choice get-string-selection))))])
 

@@ -1,6 +1,7 @@
 #lang scheme
 (require "Manipulacion_matriz.rkt")
 (require "Miscelaneos.rkt")
+(provide conjuntoCandidatos)
 
 ;;Conjunto Candidatos -> línea 118
 ;;Funcion Seleccion -> línea 108
