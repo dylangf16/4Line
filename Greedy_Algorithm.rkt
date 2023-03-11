@@ -9,7 +9,7 @@
 ;;Función solución -> En "Manipulación_matriz.rkt" línea 162 
 
 
-(define matriz '((0 0 0 0 0 0 0 0)
+(define matrix '((0 0 0 0 0 0 0 0)
                  (0 0 0 0 0 0 0 0)
                  (0 0 0 0 0 0 0 0)
                  (0 0 0 0 0 0 1 2)
@@ -18,7 +18,14 @@
                  (2 0 2 2 1 1 2 1)
                  (1 2 1 2 1 1 2 2)))
 
-;;(define max 8)
+(define matrix2 '((0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 1 0 0 0)))
 
 ;;Input: lista de pesos obtenida anteriormente, lista de candidatos obtenida anterioremente, matriz total, '()
 ;;Analiza si el candidato seleccionado sirve para obtener una solución
@@ -42,56 +49,56 @@
 ;;Y dependiendo de las fichas que haya, da un peso, si la ficha alrededor es de jugador -> +8 // si  si la ficha alrededor es de ia -> +4
 ;;Output: lista con los pesos (al igual que listaCandidatos, su posición corresponde a la columna donde está el candidato)
 ;;Hay que agregar si la posición es (0,0), que de un peso de 0
-(define (FuncionObjetivo listaCandidatos listaCandidatosSinAlterar matriz listaPesos max)
+(define (FuncionObjetivo listaCandidatos listaCandidatosSinAlterar matriz listaPesos maxFilas maxColumnas)
   (cond
     ((null? listaCandidatos) (Funcion_Viabilidad (reverse listaPesos) listaCandidatosSinAlterar matriz '()))
-    ((and (equal? (caar listaCandidatos) 0) (equal? (cadar listaCandidatos)0)  (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list 0)) max)))
+    ((and (equal? (caar listaCandidatos) 0) (equal? (cadar listaCandidatos)0)  (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list 0) listaPesos) maxFilas maxColumnas)))
     ((and (equal? (caar listaCandidatos) 1) (equal? (cadar listaCandidatos) 1)) (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list (+
                                                                                          (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1) )) 1)
-                                                                                         (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos) max)) ;;Esquina Superior Izquierda
+                                                                                         (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos) maxFilas maxColumnas)) ;;Esquina Superior Izquierda
     
-    ((and (equal? (caar listaCandidatos) 1) (equal? (cadar listaCandidatos) max)) (FuncionObjetivo (cdr listaCandidatos)listaCandidatosSinAlterar matriz (append (list (+
+    ((and (equal? (caar listaCandidatos) 1) (equal? (cadar listaCandidatos) maxColumnas)) (FuncionObjetivo (cdr listaCandidatos)listaCandidatosSinAlterar matriz (append (list (+
                                                                                          (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1) )) 1)
-                                                                                         (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos) max)) ;;Esquina Superior Derecha
+                                                                                         (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos) maxFilas maxColumnas)) ;;Esquina Superior Derecha
     
-    ((and (equal? (caar listaCandidatos) max) (equal? (cadar listaCandidatos) 1)) (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list (+
+    ((and (equal? (caar listaCandidatos) maxFilas) (equal? (cadar listaCandidatos) 1)) (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list (+
                                                                                          (Peso (cadar listaCandidatos) (car (moverMatriz matriz (- (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1) )) 1)
-                                                                                         (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos) max)) ;;Ezquina Inferior izquierda
+                                                                                         (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos) maxFilas maxColumnas)) ;;Ezquina Inferior izquierda
     
-    ((and (equal? (caar listaCandidatos) max) (equal? (cadar listaCandidatos) max)) (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list (+
+    ((and (equal? (caar listaCandidatos) maxFilas) (equal? (cadar listaCandidatos) maxColumnas)) (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list (+
                                                                                          (Peso (cadar listaCandidatos) (car (moverMatriz matriz (- (caar listaCandidatos) 1) )) 1)
                                                                                          (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1) )) 1)
-                                                                                         (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos) max)) ;;Ezquina inferior Derecha
+                                                                                         (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos) maxFilas maxColumnas)) ;;Ezquina inferior Derecha
     ((equal? (caar listaCandidatos) 1) (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list (+
                                                                                                     (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
                                                                                                     (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
                                                                                                     (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
                                                                                                     (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
-                                                                                                    (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos) max)) ;;Primera Fila
+                                                                                                    (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1))) listaPesos) maxFilas maxColumnas)) ;;Primera Fila
                                                                                                                                                                                                                                                                                    
-    ((equal? (caar listaCandidatos) max) (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list (+
+    ((equal? (caar listaCandidatos) maxFilas) (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list (+
                                                                                                     (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
                                                                                                     (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
                                                                                                     (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
-                                                                                                    (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1) )) listaPesos) max)) ;;Ultima Fila
+                                                                                                    (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1) )) listaPesos) maxFilas maxColumnas)) ;;Ultima Fila
                                                                                                         
     ((equal? (cadar listaCandidatos) 1) (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list (+
                                                                                                      (Peso (cadar listaCandidatos) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
                                                                                                      (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
                                                                                                      (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
                                                                                                      (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
-                                                                                                     (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1))) listaPesos) max)) ;;Primera columna
+                                                                                                     (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1))) listaPesos) maxFilas maxColumnas)) ;;Primera columna
 
                                                                                                     
-    ((equal? (cadar listaCandidatos) max) (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list (+
+    ((equal? (cadar listaCandidatos) maxFilas) (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list (+
                                                                                                      (Peso (cadar listaCandidatos) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
                                                                                                      (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
                                                                                                      (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (caar listaCandidatos))) 1)
                                                                                                      (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
-                                                                                                     (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1))) listaPesos) max)) ;;Ultima columna
+                                                                                                     (Peso (cadar listaCandidatos) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1))) listaPesos) maxFilas maxColumnas)) ;;Ultima columna
 
     
     (else (FuncionObjetivo (cdr listaCandidatos) listaCandidatosSinAlterar matriz (append (list (+
@@ -102,7 +109,7 @@
                                                                        (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
                                                                        (Peso (- (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1)
                                                                        (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (+ (caar listaCandidatos) 1))) 1)
-                                                                       (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1))) listaPesos) max))))
+                                                                       (Peso (+ (cadar listaCandidatos) 1) (car (moverMatriz matriz (- (caar listaCandidatos) 1))) 1))) listaPesos) maxFilas maxColumnas))))
 
 
 ;;Input: Lista de Candidatos, lista de Pesos con Viabilidad, 1 0 0
@@ -118,28 +125,27 @@
 
 ;;SIEMPRE (fila columna)
 
-;;Input: matriz, matriz (esta va a ser la que se va a manipular), '(), 1
+;;Input: matriz, matriz (esta va a ser la que se va a manipular), '(), 1 maxFilas maxColumnas
 ;;La función lo que hace es ir línea por línea hasta chocar con números y ceros, si encuentra una fila con ambas condiciones y si encima no tiene un número
 ;;Agrega la posición de encima del número topado como posible candidato
 ;;Output: lista de candidatos, la posición de estos corresponde a la columna en la que están
-(define (conjuntoCandidatos matriz matrizRecorrida listaCandidatos fila max)
+(define (conjuntoCandidatos matriz matrizRecorrida listaCandidatos fila maxFilas maxColumnas)
   (cond
-    ((null? matrizRecorrida) (FuncionSeleccion listaCandidatos (FuncionObjetivo listaCandidatos listaCandidatos matriz '() max) 1 0 0)) ;;salida
+    ((null? matrizRecorrida) (FuncionSeleccion (replace-all listaCandidatos 1 maxFilas) (FuncionObjetivo (replace-all listaCandidatos 1 maxFilas) (replace-all listaCandidatos 1 maxFilas) matriz '() maxFilas maxColumnas) 1 0 0)) ;;salida
     
     ((equal? (verifCeros (car matrizRecorrida)) #t)
-         (conjuntoCandidatos matriz (cdr matrizRecorrida) listaCandidatos (+ fila 1) max)) ;;verif si la fila está llena de 0
+         (conjuntoCandidatos matriz (cdr matrizRecorrida) listaCandidatos (+ fila 1) maxFilas maxColumnas)) ;;verif si la fila está llena de 0
     
     ((equal? (verifNum (car matrizRecorrida)) #t)
-     (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos) (+ fila 1) max)) ;;verif si la fila está llena de números
+     (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos maxFilas) (+ fila 1) maxFilas maxColumnas)) ;;verif si la fila está llena de números
     
-    (else (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos) (+ fila 1) max))))
+    (else (conjuntoCandidatos matriz (cdr matrizRecorrida) (conjuntoCandidatosAUX (car matrizRecorrida) fila listaCandidatos maxFilas) (+ fila 1) maxFilas maxColumnas))))
 
-(define (conjuntoCandidatosAUX filaPorAnalizar fila listaCandidatos)
+(define (conjuntoCandidatosAUX filaPorAnalizar fila listaCandidatos maxFilas)
   (cond
     ((equal? (verifCeros filaPorAnalizar) #t) listaCandidatos)
-    ((equal? (- fila 1) 0) (conjuntoCandidatosAUX (eliminaUnValor filaPorAnalizar '()) fila (cambiarValorEspecifico 0 0 listaCandidatos '() 1)))
-    (else (conjuntoCandidatosAUX (eliminaUnValor filaPorAnalizar '()) fila (cambiarValorEspecifico (- fila 1) (encontrarColumna filaPorAnalizar 0) listaCandidatos '() 1)))))
+    ((equal? (- fila 1) 0) (conjuntoCandidatosAUX (eliminaUnValor filaPorAnalizar '()) fila (cambiarValorEspecifico 0 0 listaCandidatos '() 1 maxFilas) maxFilas))
+    (else (conjuntoCandidatosAUX (eliminaUnValor filaPorAnalizar '()) fila (cambiarValorEspecifico (- fila 1) (encontrarColumna filaPorAnalizar 0) listaCandidatos '() 1 maxFilas) maxFilas))))
 
-(conjuntoCandidatos matriz matriz '(0 0 0 0 0 0 0 0) 1 8)
-
+(conjuntoCandidatos matrix2 matrix2 '(0 0 0 0 0 0 0 0) 1 8 8)
 

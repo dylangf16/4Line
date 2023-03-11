@@ -1,0 +1,12 @@
+#lang scheme
+
+
+(define (update-matrix matrix row col value)
+  (let ((row-to-update (list-ref matrix row)))   ; get the row to update
+    (let ((updated-row (update-list row-to-update col value)))  ; update the element at the given column
+      (update-list matrix row updated-row))))  ; update the row in the matrix
+
+(define (update-list lst index value)
+  (cond ((null? lst) '())   ; base case: empty list
+        ((= index 0) (cons value (cdr lst)))   ; update the first element of the list
+        (else (cons (car lst) (update-list (cdr lst) (- index 1) value))))   ; recursively update the rest of the list

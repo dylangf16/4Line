@@ -1,5 +1,30 @@
 #lang scheme 
-(provide encontrarColumna verifCeros verifNum eliminaUnValor cambiarValorEspecifico Peso moverMatriz moverMatrizSuperior construirNuevaMatrizTemp FuncionSeleccionAux)
+(provide encontrarColumna verifCeros verifNum eliminaUnValor cambiarValorEspecifico Peso moverMatriz moverMatrizSuperior construirNuevaMatrizTemp FuncionSeleccionAux encontrarFila replace-all)
+
+(define matrix '((0 0 0 0 0 0 0 0)
+                 (0 0 0 0 0 0 0 0)
+                 (0 0 0 0 0 0 0 0)
+                 (0 0 0 0 0 0 1 2)
+                 (0 0 0 1 0 2 2 2)
+                 (1 0 1 2 5 2 1 2)
+                 (2 0 2 2 2 1 2 1)
+                 (1 2 1 2 1 1 2 2)))
+
+
+;;matriz, columna donde revisar, 1, 
+(define (encontrarFila matriz columna fila)
+  (cond
+    ((null? matriz) (- fila 1))
+    ((>  (encontrarFilaAux (car matriz) columna) 0) (- fila 1))
+    (else (encontrarFila (cdr matriz) columna (+ fila 1)))))
+
+(define (encontrarFilaAux lista columna)
+  (cond
+    ((null? lista) 0)
+    ((equal? columna 1) (car lista))
+    (else (encontrarFilaAux (cdr lista) (- columna 1)))))
+
+(encontrarFila matrix 5 1)
 
 
 ;;Función que retorna la columna del primer valor que se encuentra
@@ -31,13 +56,27 @@
   (else (append listaRespuesta (list 0) (cdr lista)))))
 
 ;;Retorna la lista de candidatos renovada
-(define (cambiarValorEspecifico fila columna lista listaRespuesta contador)
+(define (cambiarValorEspecifico fila columna lista listaRespuesta contador maxFilas)
   (cond
   ((null? lista) listaRespuesta)
-  ((and (equal? fila 0) (equal? (car lista) 0)) (append listaRespuesta (list (list 0 0)) (cdr lista)))
+  ((and (equal? fila maxFilas) (equal? (car lista) 0)) (append listaRespuesta (list (list 0 0)) (cdr lista)))
   ((and (equal? columna contador) (equal? (car lista) 0)) (append listaRespuesta (list (list fila columna)) (cdr lista)))
-  (else (cambiarValorEspecifico fila columna (cdr lista) (append listaRespuesta (list (car lista))) (+ contador 1)))))
+  (else (cambiarValorEspecifico fila columna (cdr lista) (append listaRespuesta (list (car lista))) (+ contador 1) maxFilas))))
 
+
+(define (replace-value lst val cont maxFila)
+  (cond ((null? lst) '())
+        ((list? (car lst)) (cons (replace-value (car lst) val cont maxFila) (replace-value (cdr lst) val cont maxFila)))
+        ((equal? (car lst) val) (cons (list maxFila cont) (replace-value (cdr lst) val (+ cont 1) maxFila)))
+        (else (cons (car lst) (replace-value (cdr lst) val (+ cont 1) maxFila)))))
+
+;;Reemplaza todos los 0 con (0 0)
+(define (replace-all lst cont maxFila)
+  (cond ((null? lst) '())
+        ((list? (car lst)) (cons (replace-all (car lst) cont maxFila) (replace-all (cdr lst) cont maxFila)))
+        (else (replace-value lst (car lst) cont maxFila))))
+
+(replace-all '(0 0 0 0 (7 4) 0 0 0) 1 8)
 ;;---------------------
 
 ;;Funcion que retorna el valor de la posicion dada                                                                       
