@@ -1,6 +1,16 @@
 #lang scheme
 
-(provide 4inLine)
+(provide 4inLine buildMatrix replaceInMatrix insertToken buildList)
+
+
+(define matrix2 '((0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (0 0 0 0 0 0 0 0)
+                  (1 0 0 0 1 0 0 0)))
 
 ;----------------------------------------------------------
 
@@ -97,7 +107,7 @@
          (getFromList (car matrix) m 0))
         (else
          (getFromMatrix (cdr matrix) n m (+ count 1))
-        )))
+         )))
 
 ;;Input: matriz de donde se desea obtener una columna, numero de columna que se desea obtener
 ;;Funcion auxiliar para encontrar 4 en linea vertical, convierte una columna de una matriz en una lista
@@ -133,7 +143,7 @@
 ;;Output: diagonal de una matriz en forma de lista
 (define (getDiagonal matrix startN startM)
   (cond ((null? (getFromMatrix matrix startN startM 0))
-        null)
+         null)
         (else
          (append (list (getFromMatrix matrix startN startM 0)) (getDiagonal matrix (+ startN 1) (+ startM 1))))))
 
@@ -222,10 +232,12 @@
 ;;funcion auxiliar de insertar Token, busca en que espacio de la columna puede caer la nueva ficha
 ;;retorna el valor n (fila de la matriz) donde puede ir la nueva ficha
 (define (insertTokenAux column count)
-  (cond ((not (equal? (car column) 0))
-         (- count 1))
-        (else
-         (insertTokenAux (cdr column) (+ count 1)))))
+  (cond
+    ((null? column) 0)
+    ((not (equal? (car column) 0))
+     (- count 1))
+    (else
+     (insertTokenAux (cdr column) (+ count 1)))))
          
 ;;Input: matriz de juego, columna donde se desea insertar la ficha
 ;;Cambia el primer valor vacio (0), de la columna dada de la matriz de juego, por el valor del jugador (1)
@@ -235,5 +247,3 @@
          null)
         (else
          (replaceInMatrix matrix (insertTokenAux (getColumn matrix column) 0) column 1 0))))
-
-
